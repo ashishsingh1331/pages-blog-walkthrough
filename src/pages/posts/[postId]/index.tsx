@@ -1,11 +1,15 @@
-import Link from "next/link"
+import { getPostComments } from "@/db/comments";
+import { getPost, getPosts } from "@/db/posts";
+import { getUser, getUsers } from "@/db/users";
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
+import Link from "next/link";
 
-export default function PostPage() {
-  const postId = "1"
-  const post: any = {}
-  const user: any = {}
-  const comments: any[] = []
-
+export default function PostPage({
+  user,
+  comments,
+  post,
+  postId,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <h1 className="page-title">
@@ -24,7 +28,7 @@ export default function PostPage() {
 
       <h3 className="mt-4 mb-2">Comments</h3>
       <div className="card-stack">
-        {comments.map(comment => (
+        {comments.map((comment) => (
           <div key={comment.id} className="card">
             <div className="card-body">
               <div className="text-sm mb-1">{comment.email}</div>
@@ -34,5 +38,38 @@ export default function PostPage() {
         ))}
       </div>
     </>
-  )
+  );
 }
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+
+  return {
+    paths: posts.map((post) => {
+      return {
+        params: { postId: post.id.toString() },
+      };
+    }),
+    fallback: "blocking",
+  };
+}) satisfies GetStaticPaths;
+
+export const getStaticProps = (async ({ params }) => {
+  const postId = params?.postId as string;
+  const post = await getPost(postId);
+  const [comments, user] = await Promise.all([
+    getPostComments(postId),
+    getUser(post.userId),
+  ]);
+
+  if (post == null) return { notFound: true };
+
+  return {
+    props: {
+      user,
+      post,
+      comments,
+      postId,
+    },
+  };
+}) satisfies GetStaticProps;

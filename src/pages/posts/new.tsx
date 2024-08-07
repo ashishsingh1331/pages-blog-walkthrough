@@ -15,6 +15,5 @@ export default function NewPostPage({
 
 export const getStaticProps = (async () => {
   const users = await getUsers();
-  console.log(users);
   return { props: { users } };
 }) satisfies GetStaticProps;

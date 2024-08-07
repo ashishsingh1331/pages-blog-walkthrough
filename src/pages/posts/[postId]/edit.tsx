@@ -7,12 +7,10 @@ export default function EditPostPage({
   users,
   post,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const post: any = {};
-
   return (
     <>
       <h1 className="page-title">Edit Post</h1>
-      <PostForm post={post} />
+      <PostForm post={post} users={users} />
     </>
   );
 }

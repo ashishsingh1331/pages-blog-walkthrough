@@ -1,31 +1,31 @@
-import { Prisma } from "@prisma/client"
-import prisma from "./db"
+import { Prisma } from "@prisma/client";
+import prisma from "./db";
 
 export function getPosts({
   query,
   userId,
 }: {
-  query?: string
-  userId?: string | number
+  query?: string;
+  userId?: string | number;
 } = {}) {
-  const where: Prisma.PostFindManyArgs["where"] = {}
+  const where: Prisma.PostFindManyArgs["where"] = {};
   if (query) {
-    where.OR = [{ title: { contains: query } }, { body: { contains: query } }]
+    where.OR = [{ title: { contains: query } }, { body: { contains: query } }];
   }
 
   if (userId) {
-    where.userId = Number(userId)
+    where.userId = Number(userId);
   }
 
-  return prisma.post.findMany({ where })
+  return prisma.post.findMany({ where });
 }
 
 export function getPost(postId: string | number) {
-  return prisma.post.findUnique({ where: { id: Number(postId) } })
+  return prisma.post.findUnique({ where: { id: Number(postId) } });
 }
 
 export function getUserPosts(userId: string | number) {
-  return prisma.post.findMany({ where: { userId: Number(userId) } })
+  return prisma.post.findMany({ where: { userId: Number(userId) } });
 }
 
 export function createPost({
@@ -33,9 +33,9 @@ export function createPost({
   body,
   userId,
 }: {
-  title: string
-  body: string
-  userId: number
+  title: string;
+  body: string;
+  userId: number;
 }) {
   return prisma.post.create({
     data: {
@@ -43,7 +43,7 @@ export function createPost({
       body,
       userId,
     },
-  })
+  });
 }
 
 export function updatePost(
@@ -53,9 +53,9 @@ export function updatePost(
     body,
     userId,
   }: {
-    title: string
-    body: string
-    userId: number
+    title: string;
+    body: string;
+    userId: number;
   }
 ) {
   return prisma.post.update({
@@ -65,9 +65,9 @@ export function updatePost(
       body,
       userId,
     },
-  })
+  });
 }
 
 export function deletePost(postId: string | number) {
-  return prisma.post.delete({ where: { id: Number(postId) } })
+  return prisma.post.delete({ where: { id: Number(postId) } });
 }
